@@ -1,13 +1,14 @@
 import 'package:flutter/foundation.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../data/repositories/auth_repository.dart';
+import '../../../domain/models/user.dart';
 
 /// View Model that manages authentication state and user interactions
 /// for the login and sign-up screens.
 ///
-/// Exposes [isLoading] and [errorMessage] for the UI to reactively
-/// display progress indicators and error feedback.
+/// Holds the currently signed-in [User] in memory. Exposes [isLoggedIn],
+/// [isLoading], and [errorMessage] for the UI to reactively display
+/// progress indicators, error feedback, and routing decisions.
 class AuthViewModel extends ChangeNotifier {
   /// The authentication repository.
   final AuthRepository _authRepository;
@@ -22,20 +23,24 @@ class AuthViewModel extends ChangeNotifier {
   /// The current error message, or `null` if there is no error.
   String? _errorMessage;
 
+  /// The currently signed-in user, or `null` if not authenticated.
+  User? _currentUser;
+
   /// Whether an authentication operation is in progress.
   bool get isLoading => _isLoading;
 
   /// The current error message, or `null` if there is no error.
   String? get errorMessage => _errorMessage;
 
-  /// Returns the currently authenticated [User], or `null`.
-  User? get currentUser => _authRepository.currentUser;
+  /// Returns the currently signed-in [User], or `null`.
+  User? get currentUser => _currentUser;
 
-  /// A stream that emits [AuthState] changes (sign-in, sign-out, etc.).
-  Stream<AuthState> get authStateChanges => _authRepository.authStateChanges;
+  /// Whether a user is currently signed in.
+  bool get isLoggedIn => _currentUser != null;
 
   /// Signs up a new user with the given [email] and [password].
   ///
+  /// On success the new user is stored as the current session user.
   /// Sets [isLoading] to `true` during the operation and populates
   /// [errorMessage] if the operation fails.
   Future<bool> signUp({
@@ -45,13 +50,14 @@ class AuthViewModel extends ChangeNotifier {
     _setLoading(true);
     _clearError();
     try {
-      await _authRepository.signUp(email: email, password: password);
+      _currentUser = await _authRepository.signUp(
+        email: email,
+        password: password,
+      );
+      notifyListeners();
       return true;
-    } on AuthException catch (e) {
-      _setError(e.message);
-      return false;
     } catch (e) {
-      _setError('An unexpected error occurred. Please try again.');
+      _setError('Sign up failed. The email may already be in use.');
       return false;
     } finally {
       _setLoading(false);
@@ -60,6 +66,7 @@ class AuthViewModel extends ChangeNotifier {
 
   /// Signs in an existing user with the given [email] and [password].
   ///
+  /// On success the user is stored as the current session user.
   /// Sets [isLoading] to `true` during the operation and populates
   /// [errorMessage] if the operation fails.
   Future<bool> signIn({
@@ -69,11 +76,17 @@ class AuthViewModel extends ChangeNotifier {
     _setLoading(true);
     _clearError();
     try {
-      await _authRepository.signIn(email: email, password: password);
+      final user = await _authRepository.signIn(
+        email: email,
+        password: password,
+      );
+      if (user == null) {
+        _setError('Invalid email or password.');
+        return false;
+      }
+      _currentUser = user;
+      notifyListeners();
       return true;
-    } on AuthException catch (e) {
-      _setError(e.message);
-      return false;
     } catch (e) {
       _setError('An unexpected error occurred. Please try again.');
       return false;
@@ -82,25 +95,10 @@ class AuthViewModel extends ChangeNotifier {
     }
   }
 
-  /// Signs out the currently authenticated user.
-  ///
-  /// Sets [isLoading] to `true` during the operation and populates
-  /// [errorMessage] if the operation fails.
-  Future<bool> signOut() async {
-    _setLoading(true);
+  /// Signs out the current user by clearing the in-memory session.
+  void signOut() {
+    _currentUser = null;
     _clearError();
-    try {
-      await _authRepository.signOut();
-      return true;
-    } on AuthException catch (e) {
-      _setError(e.message);
-      return false;
-    } catch (e) {
-      _setError('An unexpected error occurred. Please try again.');
-      return false;
-    } finally {
-      _setLoading(false);
-    }
   }
 
   /// Clears the current error message.

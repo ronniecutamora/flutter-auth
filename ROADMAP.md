@@ -2,33 +2,31 @@
 
 ## Current Status: All Phases Complete
 
-The MVP for [flutter-auth] follows the strict guidelines and architecture defined in claude.md.
+The MVP for [flutter-auth] is being rebuilt to use a **custom authentication system**
+backed by the `ronnie_users_tbl` Supabase table instead of Supabase's built-in Auth SDK.
 
 The MVP includes:
 
-- **Authentication:** Sign Up, Log In, and Sign Out using Supabase.
-- **Profile Management:** A screen to View and Edit the user's profile data stored in `ronnie_profile_tbl`.
+- **Authentication:** Sign Up, Log In, and Sign Out using direct DB queries on `ronnie_users_tbl`.
+- **Profile Management:** View and Edit the user's profile data stored in `ronnie_users_tbl`.
 
 ## Instructions for Incremental Development
-Please break this down into manageable phases. Do not move to the next phase until I have reviewed and confirmed the previous one. For each phase, ensure you follow the MVVM pattern, add DartDocs, and use Material Design 3.
+Follow the MVVM pattern, add DartDocs, and use Material Design 3 for each phase.
 
-## Phase 1: The Foundation (Data Layer) - [x] Complete
+## Phase 1: Data Layer Rebuild - [x] Complete
 
-- [x] Create the Profile model in `lib/domain/models/`.
-- [x] Create the AuthService and ProfileService in `lib/data/services/` to handle direct Supabase calls.
-- [x] Create the AuthRepository and ProfileRepository in `lib/data/repositories/` as the single source of truth.
+- [x] Create `User` model in `lib/domain/models/` mapping to `ronnie_users_tbl` schema.
+- [x] Rewrite `AuthService` to perform sign-up (insert) and sign-in (select) via Supabase DB queries.
+- [x] Update `ProfileService` to use `ronnie_users_tbl` instead of `ronnie_profile_tbl`.
+- [x] Update `AuthRepository` and `ProfileRepository` for the new service APIs.
 
-## Phase 2: Logic Layer (View Models) - [x] Complete
+## Phase 2: Logic Layer Rebuild - [x] Complete
 
-- [x] Implement AuthViewModel and ProfileViewModel using ChangeNotifier.
-- [x] Handle loading states and error messages as defined in the coding guidelines.
+- [x] Rewrite `AuthViewModel` with custom session management (hold current `User?` in memory).
+- [x] Update `ProfileViewModel` to work with the new `User` model.
 
-## Phase 3: Presentation Layer (UI) - [x] Complete
+## Phase 3: Routing & UI Rebuild - [x] Complete
 
-- [x] Create the Login/Signup views.
-- [x] Create the Profile View and Edit screens.
-- [x] Implement the Provider setup in main.dart.
-
-## Phase 4: Routing & Integration - [x] Complete
-
-- [x] Set up conditional logic to show the Auth screen vs. the Home/Profile screen based on the user's session state.
+- [x] Rewrite `AuthGate` to watch `AuthViewModel` state instead of Supabase auth stream.
+- [x] Update `AuthView`, `ProfileView`, and `ProfileEditView` for the new model/flow.
+- [x] Update `main.dart` wiring.

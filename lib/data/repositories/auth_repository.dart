@@ -1,12 +1,12 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
-
+import '../../domain/models/user.dart';
 import '../services/auth_service.dart';
 
 /// Repository that serves as the single source of truth for
 /// authentication-related operations.
 ///
-/// Aggregates data from [AuthService] and exposes a clean API
-/// for the View Model layer to consume.
+/// Aggregates data from [AuthService], converts raw JSON into
+/// [User] model objects, and exposes a clean API for the
+/// View Model layer to consume.
 class AuthRepository {
   /// The underlying authentication service.
   final AuthService _authService;
@@ -17,36 +17,32 @@ class AuthRepository {
 
   /// Signs up a new user with [email] and [password].
   ///
-  /// Returns the [AuthResponse] from Supabase.
-  /// Throws an [AuthException] on failure.
-  Future<AuthResponse> signUp({
+  /// Returns the newly created [User].
+  /// Throws on failure (e.g. duplicate email).
+  Future<User> signUp({
     required String email,
     required String password,
-  }) {
-    return _authService.signUp(email: email, password: password);
+  }) async {
+    final json = await _authService.signUp(
+      email: email,
+      password: password,
+    );
+    return User.fromJson(json);
   }
 
-  /// Signs in an existing user with [email] and [password].
+  /// Signs in a user with [email] and [password].
   ///
-  /// Returns the [AuthResponse] from Supabase.
-  /// Throws an [AuthException] on failure.
-  Future<AuthResponse> signIn({
+  /// Returns the matching [User], or `null` if the credentials
+  /// are invalid.
+  Future<User?> signIn({
     required String email,
     required String password,
-  }) {
-    return _authService.signIn(email: email, password: password);
+  }) async {
+    final json = await _authService.signIn(
+      email: email,
+      password: password,
+    );
+    if (json == null) return null;
+    return User.fromJson(json);
   }
-
-  /// Signs out the currently authenticated user.
-  ///
-  /// Throws an [AuthException] on failure.
-  Future<void> signOut() {
-    return _authService.signOut();
-  }
-
-  /// Returns the current [User], or `null` if not authenticated.
-  User? get currentUser => _authService.currentUser;
-
-  /// A stream that emits [AuthState] changes (sign-in, sign-out, etc.).
-  Stream<AuthState> get authStateChanges => _authService.authStateChanges;
 }

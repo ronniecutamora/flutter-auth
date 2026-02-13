@@ -31,8 +31,9 @@ class _ProfileViewState extends State<ProfileView> {
     }
   }
 
-  Future<void> _signOut() async {
-    await context.read<AuthViewModel>().signOut();
+  void _signOut() {
+    context.read<ProfileViewModel>().clear();
+    context.read<AuthViewModel>().signOut();
   }
 
   String _formatDate(DateTime? date) {
@@ -106,8 +107,8 @@ class _ProfileViewState extends State<ProfileView> {
             );
           }
 
-          final profile = viewModel.profile;
-          if (profile == null) {
+          final user = viewModel.user;
+          if (user == null) {
             return const Center(child: Text('No profile data.'));
           }
 
@@ -117,22 +118,27 @@ class _ProfileViewState extends State<ProfileView> {
               _ProfileTile(
                 icon: Icons.person_outline,
                 label: 'Name',
-                value: profile.name.isEmpty ? 'Not set' : profile.name,
+                value: user.name.isEmpty ? 'Not set' : user.name,
+              ),
+              _ProfileTile(
+                icon: Icons.email_outlined,
+                label: 'Email',
+                value: user.email,
               ),
               _ProfileTile(
                 icon: Icons.cake_outlined,
                 label: 'Birthday',
-                value: _formatDate(profile.birthday),
+                value: _formatDate(user.birthday),
               ),
               _ProfileTile(
                 icon: Icons.wc_outlined,
                 label: 'Gender',
-                value: profile.gender.isEmpty ? 'Not set' : profile.gender,
+                value: user.gender.isEmpty ? 'Not set' : user.gender,
               ),
               _ProfileTile(
                 icon: Icons.calendar_today_outlined,
                 label: 'Member Since',
-                value: _formatDate(profile.createdAt),
+                value: _formatDate(user.createdAt),
               ),
             ],
           );

@@ -6,7 +6,7 @@ import 'profile_view_model.dart';
 
 /// Profile edit view that allows users to modify their profile fields.
 ///
-/// Pre-populates form fields from the current [ProfileViewModel.profile]
+/// Pre-populates form fields from the current [ProfileViewModel.user]
 /// and saves changes via [ProfileViewModel.updateProfile].
 class ProfileEditView extends StatefulWidget {
   /// Creates a [ProfileEditView].
@@ -32,12 +32,12 @@ class _ProfileEditViewState extends State<ProfileEditView> {
   @override
   void initState() {
     super.initState();
-    final profile = context.read<ProfileViewModel>().profile;
-    _nameController = TextEditingController(text: profile?.name ?? '');
-    _selectedBirthday = profile?.birthday;
+    final user = context.read<ProfileViewModel>().user;
+    _nameController = TextEditingController(text: user?.name ?? '');
+    _selectedBirthday = user?.birthday;
     _selectedGender =
-        (profile?.gender != null && profile!.gender.isNotEmpty)
-            ? profile.gender
+        (user?.gender != null && user!.gender.isNotEmpty)
+            ? user.gender
             : null;
   }
 

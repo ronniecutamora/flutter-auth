@@ -3,7 +3,7 @@
 ## Project Overview
 A Flutter application handling user authentication, user profile CRUD using Supabase.
 - **State Management:** Provider (MVVM Architecture)
-- **Backend:** Supabase (Auth & Database)
+- **Backend:** Supabase (Database only — custom auth via `ronnie_users_tbl`)
 
 ## Core Technology Stack
 - **Flutter SDK:** ^3.10.8
@@ -46,20 +46,20 @@ Follow the [Flutter App Architecture Guide](https://docs.flutter.dev/app-archite
 lib/
 ├── main.dart                              (MultiProvider + MaterialApp + AuthGate)
 ├── domain/models/
-│   └── profile.dart                       (Profile DTO)
+│   └── user.dart                          (User DTO — maps to ronnie_users_tbl)
 ├── data/
 │   ├── services/
-│   │   ├── auth_service.dart              (Supabase Auth calls)
-│   │   └── profile_service.dart           (Supabase DB calls)
+│   │   ├── auth_service.dart              (Custom auth via DB queries)
+│   │   └── profile_service.dart           (Profile DB queries)
 │   └── repositories/
 │       ├── auth_repository.dart           (Auth source of truth)
 │       └── profile_repository.dart        (Profile source of truth)
 └── ui/
-    ├── auth_gate.dart                     (Session-based routing)
+    ├── auth_gate.dart                     (Watches AuthViewModel for routing)
     └── features/
         ├── auth/
         │   ├── auth_view.dart             (Login/Signup screen)
-        │   └── auth_view_model.dart       (Auth state management)
+        │   └── auth_view_model.dart       (Auth state + in-memory session)
         └── profile/
             ├── profile_view.dart          (Profile display screen)
             ├── profile_edit_view.dart      (Profile edit form)
