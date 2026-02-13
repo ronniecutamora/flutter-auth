@@ -1,0 +1,13 @@
+-- Add policies for anon role (custom auth)
+CREATE POLICY "Allow anon insert" ON "public"."ronnie_users_tbl"
+  FOR INSERT TO anon
+  WITH CHECK (true);
+
+CREATE POLICY "Allow anon select" ON "public"."ronnie_users_tbl"
+  FOR SELECT TO anon
+  USING (true);
+
+CREATE POLICY "Allow anon update" ON "public"."ronnie_users_tbl"
+  FOR UPDATE TO anon
+  USING (true)
+  WITH CHECK (true);
