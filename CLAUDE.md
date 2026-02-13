@@ -12,12 +12,18 @@ A Flutter application handling user authentication, user profile CRUD using Supa
 - **UI Components:** Material Design 3
 
 ## Database Schema
+  current tables: 
+  
+  ronnie_users_tbl
+
   column_name	data_type	is_nullable	column_default
   id	uuid	NO	uid()
   created_at	timestamp with time zone	NO	now()
   name	character varying	YES	''::character varying
   birthday	date	YES	null
   gender	character varying	YES	''::character varying
+  email	character varying	NO	null
+  password	character varying	YES	null
 
 ## Architecture & Project Structure
 Follow the [Flutter App Architecture Guide](https://docs.flutter.dev/app-architecture/guide):
@@ -35,6 +41,29 @@ Follow the [Flutter App Architecture Guide](https://docs.flutter.dev/app-archite
 - `lib/data/services/`
 - `lib/utils/`
 
+## Full Directory Structure
+
+lib/
+├── main.dart                              (MultiProvider + MaterialApp + AuthGate)
+├── domain/models/
+│   └── profile.dart                       (Profile DTO)
+├── data/
+│   ├── services/
+│   │   ├── auth_service.dart              (Supabase Auth calls)
+│   │   └── profile_service.dart           (Supabase DB calls)
+│   └── repositories/
+│       ├── auth_repository.dart           (Auth source of truth)
+│       └── profile_repository.dart        (Profile source of truth)
+└── ui/
+    ├── auth_gate.dart                     (Session-based routing)
+    └── features/
+        ├── auth/
+        │   ├── auth_view.dart             (Login/Signup screen)
+        │   └── auth_view_model.dart       (Auth state management)
+        └── profile/
+            ├── profile_view.dart          (Profile display screen)
+            ├── profile_edit_view.dart      (Profile edit form)
+            └── profile_view_model.dart    (Profile state management)
 ## Coding Guidelines
 - **MVVM Pattern**: Always separate logic from UI. Widgets should only use `Consumer` or `context.watch/read` to interact with View Models.
 - **Supabase**: Access Supabase via a Service class, never directly inside a UI Widget.
