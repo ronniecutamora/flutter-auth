@@ -21,7 +21,7 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   void initState() {
     super.initState();
-    _loadProfile();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadProfile());
   }
 
   void _loadProfile() {
