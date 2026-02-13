@@ -1,38 +1,34 @@
-"I want to build the MVP for [flutter-auth] following the strict guidelines and architecture defined in my claude.md file.
+# flutter-auth MVP Roadmap
 
-The MVP must include:
+## Current Status: All Phases Complete
 
-Authentication: Sign Up, Log In, and Sign Out using Supabase.
+The MVP for [flutter-auth] follows the strict guidelines and architecture defined in claude.md.
 
-Profile Management: A screen to View and Edit the user's profile data stored in ronnie_profile_tbl.
+The MVP includes:
 
-Instructions for Incremental Development:
+- **Authentication:** Sign Up, Log In, and Sign Out using Supabase.
+- **Profile Management:** A screen to View and Edit the user's profile data stored in `ronnie_profile_tbl`.
+
+## Instructions for Incremental Development
 Please break this down into manageable phases. Do not move to the next phase until I have reviewed and confirmed the previous one. For each phase, ensure you follow the MVVM pattern, add DartDocs, and use Material Design 3.
 
-Phase 1: The Foundation (Data Layer)
+## Phase 1: The Foundation (Data Layer) - [x] Complete
 
-Create the Profile model in lib/domain/models/.
+- [x] Create the Profile model in `lib/domain/models/`.
+- [x] Create the AuthService and ProfileService in `lib/data/services/` to handle direct Supabase calls.
+- [x] Create the AuthRepository and ProfileRepository in `lib/data/repositories/` as the single source of truth.
 
-Create the AuthService and ProfileService in lib/data/services/ to handle direct Supabase calls.
+## Phase 2: Logic Layer (View Models) - [x] Complete
 
-Create the AuthRepository and ProfileRepository in lib/data/repositories/ as the single source of truth.
+- [x] Implement AuthViewModel and ProfileViewModel using ChangeNotifier.
+- [x] Handle loading states and error messages as defined in the coding guidelines.
 
-Phase 2: Logic Layer (View Models)
+## Phase 3: Presentation Layer (UI) - [x] Complete
 
-Implement AuthViewModel and ProfileViewModel using ChangeNotifier.
+- [x] Create the Login/Signup views.
+- [x] Create the Profile View and Edit screens.
+- [x] Implement the Provider setup in main.dart.
 
-Handle loading states and error messages as defined in the coding guidelines.
+## Phase 4: Routing & Integration - [x] Complete
 
-Phase 3: Presentation Layer (UI)
-
-Create the Login/Signup views.
-
-Create the Profile View and Edit screens.
-
-Implement the Provider setup in main.dart.
-
-Phase 4: Routing & Integration
-
-Set up a basic router or conditional logic to show the Auth screen vs. the Home/Profile screen based on the user's session state.
-
-Let's start with Phase 1. Please generate the code for the Data Layer (Models, Services, and Repositories) based on the ronnie_profile_tbl schema. Ensure all Supabase interactions are isolated in the Services."
+- [x] Set up conditional logic to show the Auth screen vs. the Home/Profile screen based on the user's session state.

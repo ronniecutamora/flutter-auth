@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'ui/auth_gate.dart';
 import 'ui/features/auth/auth_view_model.dart';
 import 'ui/features/profile/profile_view_model.dart';
 
@@ -42,7 +43,7 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
           brightness: Brightness.dark,
         ),
-        home: const Placeholder(),
+        home: const AuthGate(),
       ),
     );
   }
